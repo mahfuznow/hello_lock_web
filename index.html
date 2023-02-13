@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Hello Lock Web</title>
+</head>
+
+<body>
+    <form method="post" id="data-form">
+        <p>
+            Id: <input type="number" name="id" id="id" required />
+        </p>
+        <p>
+            Name: <input type="text" name="name" id="name" required />
+        </p>
+        <p>
+            Department: <input type="text" name="department" id="department" />
+        </p>
+        <p>
+            Organization: <input type="text" name="organization" id="organization" />
+        </p>
+        <p>
+            Background Color: <input type="color" id="colorHex" name="colorHex" value="#ffffff" />
+        </p>
+        <button type="submit" name="submit">Submit</button>
+    </form>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDv8lVeUKwjLoEt5Ze7-8iphcom7jqMV88",
+            authDomain: "hello-lock.firebaseapp.com",
+            databaseURL: "https://hello-lock-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "hello-lock",
+            storageBucket: "hello-lock.appspot.com",
+            messagingSenderId: "171561428745",
+            appId: "1:171561428745:web:f78f20d43c2c584a80d5d8"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        // read data from firebase
+        const dbRef = ref(getDatabase(app));
+        get(child(dbRef, 'data')).then((snapshot) => {
+            if (snapshot.exists()) {
+                var data = snapshot.val();
+                document.getElementById('id').value = data.id;
+                document.getElementById('name').value = data.name;
+                document.getElementById('department').value = data.department;
+                document.getElementById('organization').value = data.organization;
+                document.getElementById('colorHex').value = data.colorHex;
+            } else {
+                console.log("No data available");
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+
+        // Get a reference to the database service
+        const db = getDatabase(app);
+        //write data into firebase
+        document.getElementById('data-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            set(ref(db, 'data'), {
+                id: +document.getElementById('id').value,
+                name: document.getElementById('name').value,
+                department: document.getElementById('department').value,
+                organization: document.getElementById('organization').value,
+                colorHex: document.getElementById('colorHex').value
+            });
+
+            alert('Your form is submitted');
+        });
+    </script>
+</body>
+
+</html>
